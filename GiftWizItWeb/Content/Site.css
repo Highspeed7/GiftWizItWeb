@@ -81,9 +81,9 @@ div.main-content {
     margin-right: 0px;
 }
 
-.col-sm-12.alpha-card {
+.main-content .alpha-card {
     background-color: rgba(238, 238, 238, 0.7);
-    padding: 10px;
+    padding: 15px;
 }
 
 div.top-spacer {
