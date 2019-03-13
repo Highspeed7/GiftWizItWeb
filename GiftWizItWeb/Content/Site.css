@@ -97,3 +97,23 @@ div.top-spacer {
     width: 100%;
 }
 
+@media (min-width: 1179px) {
+    div .right-vertical-rule {
+        border-right: 2px solid grey;
+    }
+
+        div.right-vertical-rule:first-child {
+            margin-bottom: 10px;
+        }
+
+    span.or-divider {
+        position: relative;
+        right: -15px;
+    }
+}
+
+@media (max-width: 1179px) {
+    span.or-divider {
+        display: none;
+    }
+}
