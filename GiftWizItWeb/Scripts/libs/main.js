@@ -49,7 +49,8 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 var AccountsService = /** @class */ (function () {
     function AccountsService(http) {
         this.http = http;
-        this.url = "api/account/register";
+        this.apiUrl = "api/account";
+        this.authUrl = "/Token";
     }
     AccountsService.prototype.registerUser = function (email, password, confPass) {
         var registerObj = {
@@ -57,7 +58,23 @@ var AccountsService = /** @class */ (function () {
             password: password,
             confirmPassword: confPass
         };
-        return this.http.post(this.url, registerObj);
+        return this.http.post(this.apiUrl + "/register", registerObj);
+    };
+    AccountsService.prototype.loginUserLocal = function (email, password) {
+        var loginObj = {
+            username: email,
+            password: password,
+            grant_type: "password"
+        };
+        var headers = new _angular_http__WEBPACK_IMPORTED_MODULE_1__["Headers"]();
+        headers.append('Content-Type', 'application/x-www-form-urlencoded');
+        var options = new _angular_http__WEBPACK_IMPORTED_MODULE_1__["RequestOptions"]({ headers: headers });
+        var urlParams = new URLSearchParams();
+        urlParams.set('grant_type', loginObj.grant_type);
+        urlParams.set('username', loginObj.username);
+        urlParams.set('password', loginObj.password);
+        var body = urlParams.toString();
+        return this.http.post(this.authUrl, body, options);
     };
     AccountsService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({
@@ -90,7 +107,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"row top-spacer\"></div>\r\n<!--TODO: Consider placing within own component-->\r\n<nav class=\"navbar navbar-expand-sm top-nav\">\r\n    <a class=\"navbar-brand\">\r\n        <div class=\"row logo\">\r\n            <img src=\"../../../Content/Images/gw_logo2.png\" />\r\n        </div>\r\n    </a>\r\n    <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarText\" aria-controls=\"navbarText\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\r\n        <span class=\"navbar-toggler-icon\"></span>\r\n    </button>\r\n    <div class=\"collapse navbar-collapse\" id=\"navbarText\">\r\n        <ul class=\"navbar-nav mr-auto\"></ul>\r\n        <div class=\"navbar-text\">\r\n            <ul class=\"nav navbar-nav navbar-right\">\r\n                <li routerLinkActive=\"active\">\r\n                    <a [routerLink]=\"['register']\">Register</a>\r\n                </li>\r\n                <li routerLinkActive=\"active\">\r\n                    <a [routerLink]=\"['login']\">Login</a>\r\n                </li>\r\n                <!--<li>@Html.ActionLink(\"Log in\", \"Login\", \"Account\", routeValues: null, htmlAttributes: new { id = \"loginLink\" })</li>-->\r\n            </ul>\r\n        </div>\r\n    </div>\r\n</nav>\r\n<div class=\"row-fluid\">\r\n    <app-left-ribbon></app-left-ribbon>\r\n    <div class=\"col-sm-10 main-content\">\r\n        <router-outlet></router-outlet>\r\n    </div>\r\n</div>\r\n"
+module.exports = "<div class=\"row top-spacer\"></div>\r\n<!--TODO: Consider placing within own component-->\r\n<nav class=\"navbar navbar-expand-sm top-nav\">\r\n    <a class=\"navbar-brand\">\r\n        <div class=\"row logo\">\r\n            <img src=\"../../../Content/Images/gw_logo2.png\" />\r\n        </div>\r\n    </a>\r\n    <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarText\" aria-controls=\"navbarText\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\r\n        <span class=\"navbar-toggler-icon\"></span>\r\n    </button>\r\n    <div class=\"collapse navbar-collapse\" id=\"navbarText\">\r\n        <ul class=\"navbar-nav mr-auto\"></ul>\r\n        <div class=\"navbar-text\">\r\n            <span>Welcome {{username}}</span>\r\n            <ul class=\"nav navbar-nav navbar-right\">\r\n                <li routerLinkActive=\"active\" *ngIf=\"!isLoggedIn\">\r\n                    <a [routerLink]=\"['register']\">Register</a>\r\n                </li>\r\n                <li routerLinkActive=\"active\" *ngIf=\"!isLoggedIn; else elseBlock\">\r\n                    <a [routerLink]=\"['login']\">Login</a>\r\n                </li>\r\n                <ng-template #elseBlock>\r\n                    <li>\r\n                        <a>Logout</a>\r\n                    </li>\r\n                </ng-template>\r\n                <!--<li>@Html.ActionLink(\"Log in\", \"Login\", \"Account\", routeValues: null, htmlAttributes: new { id = \"loginLink\" })</li>-->\r\n            </ul>\r\n        </div>\r\n    </div>\r\n</nav>\r\n<div class=\"row-fluid\">\r\n    <app-left-ribbon></app-left-ribbon>\r\n    <div class=\"col-sm-10 main-content\">\r\n        <router-outlet></router-outlet>\r\n    </div>\r\n</div>\r\n"
 
 /***/ }),
 
@@ -105,23 +122,41 @@ module.exports = "<div class=\"row top-spacer\"></div>\r\n<!--TODO: Consider pla
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppComponent", function() { return AppComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _window_ref_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./window-ref.service */ "./src/app/window-ref.service.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
 
 var AppComponent = /** @class */ (function () {
-    function AppComponent() {
+    function AppComponent(windowRef) {
+        this.windowRef = windowRef;
         this.title = 'app';
+        this.isLoggedIn = false;
+        this.window = this.windowRef.nativeWindow;
     }
+    AppComponent.prototype.ngOnInit = function () {
+        if (this.window.gw_app.userInfo.username !== undefined) {
+            this.username = this.window.gw_app.userInfo.username;
+            this.isLoggedIn = true;
+        }
+        else {
+            this.username = "Guest";
+        }
+    };
     AppComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             selector: 'app-root',
             template: __webpack_require__(/*! ./app.component.html */ "./src/app/app.component.html"),
             styles: [__webpack_require__(/*! ./app.component.css */ "./src/app/app.component.css")]
-        })
+        }),
+        __metadata("design:paramtypes", [_window_ref_service__WEBPACK_IMPORTED_MODULE_1__["WindowRefService"]])
     ], AppComponent);
     return AppComponent;
 }());
@@ -150,6 +185,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_http__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/http */ "./node_modules/@angular/http/fesm5/http.js");
 /* harmony import */ var _accounts_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./accounts.service */ "./src/app/accounts.service.ts");
 /* harmony import */ var _login_login_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./login/login.component */ "./src/app/login/login.component.ts");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/fesm5/common.js");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -167,6 +203,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 // Services
 
 
+
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
@@ -182,6 +219,7 @@ var AppModule = /** @class */ (function () {
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
                 _angular_http__WEBPACK_IMPORTED_MODULE_7__["HttpModule"],
                 _angular_forms__WEBPACK_IMPORTED_MODULE_3__["ReactiveFormsModule"],
+                _angular_common__WEBPACK_IMPORTED_MODULE_10__["CommonModule"],
                 _angular_router__WEBPACK_IMPORTED_MODULE_2__["RouterModule"].forRoot([
                     {
                         path: "register",
@@ -285,7 +323,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"row\">\r\n    <div class=\"alpha-card col-sm-8 mx-auto\">\r\n        <div class=\"row\">\r\n            <div class=\"col-sm-6\">\r\n                <form [formGroup]=\"loginForm\">\r\n                    <div class=\"form-group right-vertical-rule\">\r\n                        <label for=\"email\">Email: </label>\r\n                        <input id=\"email\" type=\"text\" class=\"form-control\" />\r\n                    </div>\r\n                    <div class=\"row\">\r\n                        <div class=\"col-md-12 d-none d-md-block\">\r\n                            <span class=\"or-divider float-right\">-OR-</span>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group right-vertical-rule\">\r\n                        <label for=\"password\">Password: </label>\r\n                        <input id=\"password\" type=\"password\" value=\"\" class=\"form-control\" />\r\n                    </div>\r\n                    <div class=\"btn-group\">\r\n                        <button class=\"btn btn-primary\">Submit</button>\r\n                    </div>\r\n                </form>\r\n            </div>\r\n            <div class=\"col-sm-6\">\r\n                <h5>Login using the below methods.</h5>\r\n                <div class=\"row\">\r\n                    <div class=\"col-sm-12\">\r\n                        <button class=\"btn btn-primary\">Facebook</button>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>"
+module.exports = "<div class=\"row\">\r\n    <div class=\"alpha-card col-sm-8 mx-auto\">\r\n        <div class=\"row\">\r\n            <div class=\"col-sm-6\">\r\n                <h5>Login using an existing account.</h5>\r\n                <form [formGroup]=\"loginForm\" (ngSubmit)=\"onLoginSubmit()\">\r\n                    <div class=\"form-group right-vertical-rule\">\r\n                        <label for=\"email\">Email: </label>\r\n                        <input id=\"email\"\r\n                               type=\"text\"\r\n                               class=\"form-control\"\r\n                               formControlName=\"email\" />\r\n                    </div>\r\n                    <div class=\"row\">\r\n                        <div class=\"col-md-12 d-none d-md-block\">\r\n                            <span class=\"or-divider float-right\">-OR-</span>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group right-vertical-rule\">\r\n                        <label for=\"password\" style=\"position: relative; top: -20px;\">Password: </label>\r\n                        <input id=\"password\"\r\n                               style=\"position: relative; top: -20px;\"\r\n                               type=\"password\"\r\n                               class=\"form-control\"\r\n                               formControlName=\"password\" />\r\n                    </div>\r\n                    <div class=\"btn-group\">\r\n                        <button class=\"btn btn-primary\">Submit</button>\r\n                    </div>\r\n                </form>\r\n            </div>\r\n            <div class=\"col-sm-6\">\r\n                <h5>Login using one of the below methods.</h5>\r\n                <div class=\"row\">\r\n                    <div class=\"col-sm-12\">\r\n                        <button class=\"btn btn-primary\">Facebook</button>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>"
 
 /***/ }),
 
@@ -300,6 +338,9 @@ module.exports = "<div class=\"row\">\r\n    <div class=\"alpha-card col-sm-8 mx
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LoginComponent", function() { return LoginComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
+/* harmony import */ var _accounts_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../accounts.service */ "./src/app/accounts.service.ts");
+/* harmony import */ var _window_ref_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../window-ref.service */ "./src/app/window-ref.service.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -310,10 +351,32 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
+
+
+
 var LoginComponent = /** @class */ (function () {
-    function LoginComponent() {
+    function LoginComponent(acntSvc, windowRef) {
+        this.acntSvc = acntSvc;
+        this.windowRef = windowRef;
+        this.window = windowRef.nativeWindow;
     }
     LoginComponent.prototype.ngOnInit = function () {
+        this.loginForm = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroup"]({
+            'email': new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required]),
+            'password': new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]('', [_angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required])
+        });
+    };
+    LoginComponent.prototype.onLoginSubmit = function () {
+        var _this = this;
+        var username = this.loginForm.controls.email.value;
+        var password = this.loginForm.controls.password.value;
+        this.acntSvc.loginUserLocal(username, password).subscribe(function (response) {
+            var res = JSON.parse(response._body);
+            if (res.access_token !== undefined) {
+                localStorage.setItem('access_token', res.access_token);
+                _this.window.gw_app.userInfo.username = res.userName;
+            }
+        });
     };
     LoginComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -321,7 +384,7 @@ var LoginComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./login.component.html */ "./src/app/login/login.component.html"),
             styles: [__webpack_require__(/*! ./login.component.css */ "./src/app/login/login.component.css")]
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [_accounts_service__WEBPACK_IMPORTED_MODULE_2__["AccountsService"], _window_ref_service__WEBPACK_IMPORTED_MODULE_3__["WindowRefService"]])
     ], LoginComponent);
     return LoginComponent;
 }());
@@ -395,7 +458,7 @@ var RegisterComponent = /** @class */ (function () {
     RegisterComponent.prototype.onRegisterSubmit = function () {
         var username = this.registerForm.controls.email.value;
         var password = this.registerForm.controls.password.value;
-        var confPass = this.registerForm.controls.confpass.value;
+        var confPass = this.registerForm.controls.confPass.value;
         this.accntSvc.registerUser(username, password, confPass).subscribe(function (response) {
             console.log(response);
         });
@@ -409,6 +472,49 @@ var RegisterComponent = /** @class */ (function () {
         __metadata("design:paramtypes", [_accounts_service__WEBPACK_IMPORTED_MODULE_1__["AccountsService"]])
     ], RegisterComponent);
     return RegisterComponent;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/window-ref.service.ts":
+/*!***************************************!*\
+  !*** ./src/app/window-ref.service.ts ***!
+  \***************************************/
+/*! exports provided: WindowRefService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WindowRefService", function() { return WindowRefService; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+function getWindow() {
+    return window;
+}
+var WindowRefService = /** @class */ (function () {
+    function WindowRefService() {
+    }
+    Object.defineProperty(WindowRefService.prototype, "nativeWindow", {
+        get: function () {
+            return getWindow();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    WindowRefService = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({
+            providedIn: 'root'
+        })
+    ], WindowRefService);
+    return WindowRefService;
 }());
 
 

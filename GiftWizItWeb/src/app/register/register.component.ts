@@ -33,7 +33,7 @@ export class RegisterComponent implements OnInit {
     public onRegisterSubmit() {
         var username = this.registerForm.controls.email.value;
         var password = this.registerForm.controls.password.value;
-        var confPass = this.registerForm.controls.confpass.value;
+        var confPass = this.registerForm.controls.confPass.value;
 
         this.accntSvc.registerUser(username, password, confPass).subscribe((response) => {
             console.log(response);

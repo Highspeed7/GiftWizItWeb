@@ -12,13 +12,19 @@
     <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav mr-auto"></ul>
         <div class="navbar-text">
+            <span>Welcome {{username}}</span>
             <ul class="nav navbar-nav navbar-right">
-                <li routerLinkActive="active">
+                <li routerLinkActive="active" *ngIf="!isLoggedIn">
                     <a [routerLink]="['register']">Register</a>
                 </li>
-                <li routerLinkActive="active">
+                <li routerLinkActive="active" *ngIf="!isLoggedIn; else elseBlock">
                     <a [routerLink]="['login']">Login</a>
                 </li>
+                <ng-template #elseBlock>
+                    <li>
+                        <a>Logout</a>
+                    </li>
+                </ng-template>
                 <!--<li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>-->
             </ul>
         </div>

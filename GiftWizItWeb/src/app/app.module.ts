@@ -11,6 +11,7 @@ import { HttpModule } from '@angular/http';
 // Services
 import { AccountsService } from './accounts.service';
 import { LoginComponent } from './login/login.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
     declarations: [
@@ -23,6 +24,7 @@ import { LoginComponent } from './login/login.component';
         BrowserModule,
         HttpModule,
         ReactiveFormsModule,
+        CommonModule,
         RouterModule.forRoot([
             {
                 path: "register",

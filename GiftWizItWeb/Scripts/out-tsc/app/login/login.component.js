@@ -10,10 +10,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
+var forms_1 = require("@angular/forms");
 var LoginComponent = /** @class */ (function () {
     function LoginComponent() {
     }
     LoginComponent.prototype.ngOnInit = function () {
+        this.loginForm = new forms_1.FormGroup({
+            'email': new forms_1.FormControl('', [forms_1.Validators.required]),
+            'password': new forms_1.FormControl('', [forms_1.Validators.required])
+        });
+    };
+    LoginComponent.prototype.onLoginSubmit = function () {
     };
     LoginComponent = __decorate([
         core_1.Component({
