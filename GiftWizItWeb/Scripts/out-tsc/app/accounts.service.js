@@ -11,10 +11,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var http_1 = require("@angular/http");
+var rxjs_1 = require("rxjs");
 var AccountsService = /** @class */ (function () {
     function AccountsService(http) {
         this.http = http;
-        this.url = "api/account/register";
+        this.loggedInSrc = new rxjs_1.Subject();
+        this.logingedIn$ = this.loggedInSrc.asObservable();
+        this.apiUrl = "api/account";
+        this.authUrl = "/Token";
     }
     AccountsService.prototype.registerUser = function (email, password, confPass) {
         var registerObj = {
@@ -22,7 +26,48 @@ var AccountsService = /** @class */ (function () {
             password: password,
             confirmPassword: confPass
         };
-        return this.http.post(this.url, registerObj);
+        return this.http.post(this.apiUrl + "/register", registerObj);
+    };
+    AccountsService.prototype.loginUserLocal = function (email, password) {
+        var loginObj = {
+            username: email,
+            password: password,
+            grant_type: "password"
+        };
+        var headers = new http_1.Headers();
+        headers.append('Content-Type', 'application/x-www-form-urlencoded');
+        var options = new http_1.RequestOptions({ headers: headers });
+        var urlParams = new URLSearchParams();
+        urlParams.set('grant_type', loginObj.grant_type);
+        urlParams.set('username', loginObj.username);
+        urlParams.set('password', loginObj.password);
+        var body = urlParams.toString();
+        return this.http.post(this.authUrl, body, options);
+    };
+    AccountsService.prototype.logout = function () {
+        // Get access token
+        var access_token = localStorage.getItem("access_token");
+        var headers = new http_1.Headers();
+        headers.append("Authorization", "bearer " + access_token);
+        var options = new http_1.RequestOptions({ headers: headers });
+        return this.http.post(this.apiUrl + "/logout", null, options);
+    };
+    AccountsService.prototype.getExternalUrl = function () {
+        // Obtain external urls
+        return this.http.get(this.apiUrl + "/ExternalLogins?returnUrl=/login&generateState=true");
+    };
+    AccountsService.prototype.doSocialLogin = function (url) {
+        return this.http.get("" + url);
+    };
+    AccountsService.prototype.isUserRegistered = function (access_token) {
+        return this.http.get(this.apiUrl + "/UserInfo", new http_1.RequestOptions({ headers: new http_1.Headers({ 'Authorization': "Bearer " + access_token }) }));
+    };
+    AccountsService.prototype.signupExternalUser = function (access_token) {
+        var headers = new http_1.Headers({
+            'content-type': 'application/json',
+            'Authorization': "Bearer " + access_token
+        });
+        return this.http.post(this.apiUrl + "/RegisterExternal", null, new http_1.RequestOptions({ headers: headers }));
     };
     AccountsService = __decorate([
         core_1.Injectable({

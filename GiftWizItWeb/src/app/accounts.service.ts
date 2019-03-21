@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, RequestOptions, Headers } from '@angular/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 
 import { RegisterModel } from './models/register';
 import { LoginLocalModel } from './models/login';
@@ -9,6 +9,9 @@ import { LoginLocalModel } from './models/login';
     providedIn: 'root'
 })
 export class AccountsService {
+    public loggedInSrc: Subject<boolean> = new Subject<boolean>();
+    public logingedIn$ = this.loggedInSrc.asObservable();
+
     private apiUrl: string = "api/account";
     private authUrl: string = "/Token";
 
@@ -44,5 +47,37 @@ export class AccountsService {
         let body = urlParams.toString();
 
         return this.http.post(this.authUrl, body, options);
+    }
+
+    public logout() {
+        // Get access token
+        let access_token = localStorage.getItem("access_token");
+        let headers = new Headers();
+        headers.append("Authorization", `bearer ${access_token}`);
+        let options = new RequestOptions({ headers: headers });
+
+        return this.http.post(`${this.apiUrl}/logout`, null, options);
+    }
+
+    public getExternalUrl(): Observable<any> {
+        // Obtain external urls
+        return this.http.get(`${this.apiUrl}/ExternalLogins?returnUrl=/login&generateState=true`);
+    }
+
+    public doSocialLogin(url: string) {
+        return this.http.get(`${url}`);
+    }
+
+    public isUserRegistered(access_token: string) {
+        return this.http.get(`${this.apiUrl}/UserInfo`, new RequestOptions({ headers: new Headers({ 'Authorization': `Bearer ${access_token}` }) }));
+    }
+
+    public signupExternalUser(access_token: string) {
+        var headers = new Headers({
+            'content-type': 'application/json',
+            'Authorization': `Bearer ${access_token}`
+        });
+
+        return this.http.post(`${this.apiUrl}/RegisterExternal`, null, new RequestOptions({ headers: headers }));
     }
 }

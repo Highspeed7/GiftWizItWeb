@@ -12,9 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var accounts_service_1 = require("../accounts.service");
 var forms_1 = require("@angular/forms");
+var router_1 = require("@angular/router");
 var RegisterComponent = /** @class */ (function () {
-    function RegisterComponent(accntSvc) {
+    function RegisterComponent(accntSvc, router) {
         this.accntSvc = accntSvc;
+        this.router = router;
     }
     RegisterComponent.prototype.ngOnInit = function () {
         this.registerForm = new forms_1.FormGroup({
@@ -28,11 +30,13 @@ var RegisterComponent = /** @class */ (function () {
         console.log(elem);
     };
     RegisterComponent.prototype.onRegisterSubmit = function () {
+        var _this = this;
         var username = this.registerForm.controls.email.value;
         var password = this.registerForm.controls.password.value;
-        var confPass = this.registerForm.controls.confpass.value;
+        var confPass = this.registerForm.controls.confPass.value;
         this.accntSvc.registerUser(username, password, confPass).subscribe(function (response) {
             console.log(response);
+            _this.router.navigate(['login']);
         });
     };
     RegisterComponent = __decorate([
@@ -41,7 +45,7 @@ var RegisterComponent = /** @class */ (function () {
             templateUrl: './register.component.html',
             styleUrls: ['./register.component.css']
         }),
-        __metadata("design:paramtypes", [accounts_service_1.AccountsService])
+        __metadata("design:paramtypes", [accounts_service_1.AccountsService, router_1.Router])
     ], RegisterComponent);
     return RegisterComponent;
 }());

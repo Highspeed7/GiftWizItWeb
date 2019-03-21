@@ -3,6 +3,7 @@ import { AccountsService } from "../accounts.service";
 
 import { RegisterModel } from '../models/register';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-register',
@@ -13,7 +14,7 @@ export class RegisterComponent implements OnInit {
 
     public registerForm: FormGroup;
 
-    constructor(private accntSvc: AccountsService) { }
+    constructor(private accntSvc: AccountsService, private router: Router) { }
 
     ngOnInit() {
         this.registerForm = new FormGroup(
@@ -37,6 +38,7 @@ export class RegisterComponent implements OnInit {
 
         this.accntSvc.registerUser(username, password, confPass).subscribe((response) => {
             console.log(response);
+            this.router.navigate(['login']);
         });
     }
 }

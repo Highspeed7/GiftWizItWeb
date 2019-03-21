@@ -17,6 +17,7 @@ var http_1 = require("@angular/http");
 // Services
 var accounts_service_1 = require("./accounts.service");
 var login_component_1 = require("./login/login.component");
+var common_1 = require("@angular/common");
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
@@ -32,6 +33,7 @@ var AppModule = /** @class */ (function () {
                 platform_browser_1.BrowserModule,
                 http_1.HttpModule,
                 forms_1.ReactiveFormsModule,
+                common_1.CommonModule,
                 router_1.RouterModule.forRoot([
                     {
                         path: "register",

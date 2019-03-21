@@ -10,6 +10,9 @@ using Microsoft.Owin.Security.OAuth;
 using Owin;
 using GiftWizItWeb.Providers;
 using GiftWizItWeb.Models;
+using System.Configuration;
+using Microsoft.Owin.Security.Facebook;
+using GiftWizItWeb.Facebook;
 
 namespace GiftWizItWeb
 {
@@ -55,9 +58,19 @@ namespace GiftWizItWeb
             //    consumerKey: "",
             //    consumerSecret: "");
 
-            //app.UseFacebookAuthentication(
-            //    appId: "",
-            //    appSecret: "");
+            var facebookOptions = new FacebookAuthenticationOptions()
+            {
+                AppId = ConfigurationManager.AppSettings["facebookAppId"],
+                AppSecret = ConfigurationManager.AppSettings["facebookAppSecret"],
+                BackchannelHttpHandler = new FacebookBackChannelHandler(),
+                UserInformationEndpoint = "https://graph.facebook.com/v3.0/me?fields=id,email"
+            };
+
+            facebookOptions.Scope.Add("email");
+
+            app.UseFacebookAuthentication(
+                facebookOptions
+            );
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             //{
